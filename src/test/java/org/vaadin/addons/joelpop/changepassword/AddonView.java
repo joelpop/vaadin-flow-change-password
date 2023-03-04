@@ -1,9 +1,8 @@
-package org.vaadin.addons.mygroup;
+package org.vaadin.addons.joelpop.changepassword;
 
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.router.Route;
 
-@Route("")
+//@Route("")
 public class AddonView extends Div {
 
     public AddonView() {

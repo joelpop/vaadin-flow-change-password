@@ -1,4 +1,4 @@
-package org.vaadin.addons.mygroup;
+package org.vaadin.addons.joelpop.changepassword;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Assert;
