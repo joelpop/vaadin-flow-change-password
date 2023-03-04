@@ -20,6 +20,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -173,7 +174,7 @@ public class ChangePassword extends Composite<HorizontalLayout> {
     }
 
     private String fieldIsRequired(HasLabel hasLabel) {
-        return "%s is required.".formatted(hasLabel.getLabel());
+        return String.format("%s is required.", hasLabel.getLabel());
     }
 
     private ValidationResult passwordRuleValidator(String desiredPassword, ValueContext valueContext) {
@@ -271,7 +272,7 @@ public class ChangePassword extends Composite<HorizontalLayout> {
     public List<PasswordRule> getRules() {
         return ruleItems.stream()
                 .map(RuleItem::getRule)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public void setRules(PasswordRule... rules) {
@@ -389,7 +390,7 @@ public class ChangePassword extends Composite<HorizontalLayout> {
         public StrengthMeter() {
             strengthLevelBoxes = Arrays.stream(PasswordStrengthLevel.values())
                     .map(level -> new Div())
-                    .toList();
+                    .collect(Collectors.toList());
             strengthLevelBoxes.forEach(div -> div.addClassNames("change-password-strength-level-box"));
 
             var strengthLevelBar = new Div();
@@ -426,11 +427,11 @@ public class ChangePassword extends Composite<HorizontalLayout> {
             String feedback;
 
             if (passwordStrength != null) {
-                var passwordStrengthLevel = passwordStrength.passwordStrengthLevel();
+                var passwordStrengthLevel = passwordStrength.getPasswordStrengthLevel();
                 passwordStrengthLevelOrdinal = passwordStrengthLevel.ordinal();
                 passwordStrengthLevelColor = passwordStrengthLevel.getColor();
                 caption = passwordStrengthLevel.getCaption();
-                feedback = passwordStrength.feedback();
+                feedback = passwordStrength.getFeedback();
             }
             else {
                 passwordStrengthLevelOrdinal = -1;
@@ -505,8 +506,24 @@ public class ChangePassword extends Composite<HorizontalLayout> {
         }
     }
 
-    public record PasswordStrength(
+    public static class PasswordStrength {
+        private final PasswordStrengthLevel passwordStrengthLevel;
+        private final String feedback;
+
+        public PasswordStrength(
             PasswordStrengthLevel passwordStrengthLevel,
-            String feedback
-    ) {}
+            String feedback) {
+
+            this.passwordStrengthLevel = passwordStrengthLevel;
+            this.feedback = feedback;
+        }
+
+        public PasswordStrengthLevel getPasswordStrengthLevel() {
+            return passwordStrengthLevel;
+        }
+
+        public String getFeedback() {
+            return feedback;
+        }
+    }
 }

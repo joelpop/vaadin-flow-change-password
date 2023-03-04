@@ -28,16 +28,16 @@ public class ChangePasswordView extends Composite<Div> {
 
     private void onChangePasswordClick(ClickEvent<Button> event) {
         var changePasswordDialog = new ChangePasswordDialog();
-        changePasswordDialog.setInfoText(new Html("""
-            <span>
-                Instructions
-                <ol>
-                    <li>Enter the current password.
-                    <li>Provide a new password that satisfies the following complexity rules.
-                    <li>Verify its strength with the meter.
-                    <li>Repeat the new password to confirm.
-                </ol>
-            </span>"""));
+        changePasswordDialog.setInfoText(new Html(
+                "<span>\n" +
+                      "    Instructions\n" +
+                      "    <ol>\n" +
+                      "        <li>Enter the current password.\n" +
+                      "        <li>Provide a new password that satisfies the following complexity rules.\n" +
+                      "        <li>Verify its strength with the meter.\n" +
+                      "        <li>Repeat the new password to confirm.\n" +
+                      "    </ol>\n" +
+                      "</span>"));
         changePasswordDialog.addRule(PasswordRule.length(8));
         changePasswordDialog.addRule(PasswordRule.length(10, 64));
         changePasswordDialog.addRule(PasswordRule.hasUppercaseLetters(1));
