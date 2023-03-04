@@ -53,7 +53,7 @@ public class ChangePasswordView extends Composite<Div> {
                 passwordEncoder.apply("third")));
         changePasswordDialog.addRule(PasswordRule.strengthOf(ChangePassword.PasswordStrengthLevel.STRONG, this::onRuling));
         changePasswordDialog.setScorer(this::onScoring);
-        changePasswordDialog.addOkListener(e -> Notification.show("New password is \"%s\"".formatted(e.getDesiredPassword())));
+        changePasswordDialog.addOkListener(e -> Notification.show(String.format("New password is \"%s\"", e.getDesiredPassword())));
         changePasswordDialog.open();
     }
 
@@ -65,7 +65,7 @@ public class ChangePasswordView extends Composite<Div> {
     private ChangePassword.PasswordStrength onScoring(String desiredPassword) {
         var strength = zxcvbn.measure(desiredPassword);
         return new ChangePassword.PasswordStrength(guessesToPasswordStrengthLevel(strength.getGuesses()),
-                "Could take %s to crack. %s".formatted(
+                String.format("Could take %s to crack. %s",
                         strength.getCrackTimesDisplay().getOfflineSlowHashing1e4perSecond(),
                         strength.getFeedback().getWarning()));
     }

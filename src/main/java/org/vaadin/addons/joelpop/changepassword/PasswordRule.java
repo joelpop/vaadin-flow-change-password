@@ -25,27 +25,27 @@ public class PasswordRule {
     }
 
     public static PasswordRule hasUppercaseLetters(int count) {
-        return new PasswordRule("At least %d uppercase letter%s".formatted(count, count == 1 ? "" : "s"),
+        return new PasswordRule(String.format("At least %d uppercase letter%s", count, count == 1 ? "" : "s"),
                 password -> password.replaceAll("[^\\p{Upper}]", "").length() >= count);
     }
 
     public static PasswordRule hasLowercaseLetters(int count) {
-        return new PasswordRule("At least %d lowercase letter%s".formatted(count, count == 1 ? "" : "s"),
+        return new PasswordRule(String.format("At least %d lowercase letter%s", count, count == 1 ? "" : "s"),
                 password -> password.replaceAll("[^\\p{Lower}]", "").length() >= count);
     }
 
     public static PasswordRule hasDigits(int count) {
-        return new PasswordRule("At least %d digit%s".formatted(count, count == 1 ? "" : "s"),
+        return new PasswordRule(String.format("At least %d digit%s", count, count == 1 ? "" : "s"),
                 password -> password.replaceAll("[^\\p{Digit}]", "").length() >= count);
     }
 
     public static PasswordRule hasSpecials(int count) {
-        return new PasswordRule("At least %d special character%s".formatted(count, count == 1 ? "" : "s"),
+        return new PasswordRule(String.format("At least %d special character%s", count, count == 1 ? "" : "s"),
                 password -> password.replaceAll("[\\p{Upper}\\p{Lower}\\p{Digit}]", "").length() >= count);
     }
 
     public static PasswordRule hasCharacterGroups(int count) {
-        return new PasswordRule("Characters from at least %d of the groups: uppercase, lowercase, digits, & specials".formatted(count),
+        return new PasswordRule(String.format("Characters from at least %d of the groups: uppercase, lowercase, digits, & specials", count),
                 password ->
                         (Pattern.compile("\\p{Upper}").matcher(password).find() ? 1 : 0) +
                         (Pattern.compile("\\p{Lower}").matcher(password).find() ? 1 : 0) +
@@ -60,12 +60,12 @@ public class PasswordRule {
     }
 
     public static PasswordRule length(int minLength) {
-        return new PasswordRule("At least %d characters long".formatted(minLength),
+        return new PasswordRule(String.format("At least %d characters long", minLength),
                 password -> password.length() >= minLength);
     }
 
     public static PasswordRule length(int minLength, int maxLength) {
-        return new PasswordRule("Between %d and %d characters long".formatted(minLength, maxLength),
+        return new PasswordRule(String.format("Between %d and %d characters long", minLength, maxLength),
                 password -> {
                     var length = password.length();
                     return (length >= minLength) && (length <= maxLength);
@@ -75,12 +75,12 @@ public class PasswordRule {
     public static PasswordRule notPreviousOf(Function<CharSequence, String> passwordEncoder,
                                              String... previousEncodedPasswords) {
         var encodedPasswords = Set.of(previousEncodedPasswords);
-        return new PasswordRule("Not any of %d previous passwords".formatted(encodedPasswords.size()),
+        return new PasswordRule(String.format("Not any of %d previous passwords", encodedPasswords.size()),
                 password -> !encodedPasswords.contains(passwordEncoder.apply(password)));
     }
 
     public static PasswordRule strengthOf(PasswordStrengthLevel strengthLevel, Function<String, PasswordStrengthLevel> scorer) {
-        return new PasswordRule("Minimum strength of %s".formatted(strengthLevel.getCaption()),
+        return new PasswordRule(String.format("Minimum strength of %s", strengthLevel.getCaption()),
                 password -> scorer.apply(password).compareTo(strengthLevel) >= 0);
     }
 
