@@ -21,6 +21,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A panel for changing, resetting, or establishing a password.
@@ -250,7 +251,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
                     .orElse(false)) {
                 return ValidationResult.ok();
             }
-            return ValidationResult.error(changePasswordI18n.getRequiredFieldMessageFormat().formatted(hasLabel.getLabel()));
+            return ValidationResult.error(String.format(changePasswordI18n.getRequiredFieldMessageFormat(), hasLabel.getLabel()));
         };
     }
 
@@ -362,7 +363,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
     public List<ChangePasswordRule> getUseridRules() {
         return useridRuleItems.stream()
                 .map(RuleItem::getRule)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public void setUseridRules(ChangePasswordRule... rules) {
@@ -387,7 +388,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
     public List<ChangePasswordRule> getPasswordRules() {
         return passwordRuleItems.stream()
                 .map(RuleItem::getRule)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public void setPasswordRules(ChangePasswordRule... rules) {
@@ -660,7 +661,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
 
             strengthLevelBoxes = Arrays.stream(PasswordStrengthLevel.values())
                     .map(level -> new Div())
-                    .toList();
+                    .collect(Collectors.toList());
             strengthLevelBoxes.forEach(div -> div.addClassNames("change-password-strength-level-box"));
 
             var strengthLevelBar = new Div();
@@ -788,9 +789,22 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
     }
 
 
-    public record PasswordStrength(
-            PasswordStrengthLevel passwordStrengthLevel,
-            String feedback
-    ) {}
+    public static class PasswordStrength {
+        private final PasswordStrengthLevel passwordStrengthLevel;
+        private final String feedback;
 
+        public PasswordStrength(PasswordStrengthLevel passwordStrengthLevel,
+                                String feedback) {
+            this.passwordStrengthLevel = passwordStrengthLevel;
+            this.feedback = feedback;
+        }
+
+        public PasswordStrengthLevel passwordStrengthLevel() {
+            return passwordStrengthLevel;
+        }
+
+        public String feedback() {
+            return feedback;
+        }
+    }
 }

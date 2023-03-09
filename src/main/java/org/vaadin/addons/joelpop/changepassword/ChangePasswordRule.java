@@ -36,7 +36,7 @@ public class ChangePasswordRule {
 
 
     public static ChangePasswordRule hasUppercaseLetters(int count) {
-        return hasUppercaseLetters(count, "At least %d uppercase letter%s".formatted(count, count == 1 ? "" : "s"));
+        return hasUppercaseLetters(count, String.format("At least %d uppercase letter%s", count, count == 1 ? "" : "s"));
     }
 
     public static ChangePasswordRule hasUppercaseLetters(int count, String text) {
@@ -46,7 +46,7 @@ public class ChangePasswordRule {
 
 
     public static ChangePasswordRule hasLowercaseLetters(int count) {
-        return hasLowercaseLetters(count, "At least %d lowercase letter%s".formatted(count, count == 1 ? "" : "s"));
+        return hasLowercaseLetters(count, String.format("At least %d lowercase letter%s", count, count == 1 ? "" : "s"));
     }
 
     public static ChangePasswordRule hasLowercaseLetters(int count, String text) {
@@ -56,7 +56,7 @@ public class ChangePasswordRule {
 
 
     public static ChangePasswordRule hasDigits(int count) {
-        return hasDigits(count, "At least %d digit%s".formatted(count, count == 1 ? "" : "s"));
+        return hasDigits(count, String.format("At least %d digit%s", count, count == 1 ? "" : "s"));
     }
 
     public static ChangePasswordRule hasDigits(int count, String text) {
@@ -66,7 +66,7 @@ public class ChangePasswordRule {
 
 
     public static ChangePasswordRule hasSpecials(int count) {
-        return hasSpecials(count, "At least %d special character%s".formatted(count, count == 1 ? "" : "s"));
+        return hasSpecials(count, String.format("At least %d special character%s", count, count == 1 ? "" : "s"));
     }
 
     public static ChangePasswordRule hasSpecials(int count, String text) {
@@ -77,7 +77,7 @@ public class ChangePasswordRule {
 
     public static ChangePasswordRule hasCharacterGroups(int count) {
         return hasCharacterGroups(count,
-                "Characters from at least %d of the groups: uppercase, lowercase, digits, & specials".formatted(count));
+                String.format("Characters from at least %d of the groups: uppercase, lowercase, digits, & specials", count));
     }
 
     public static ChangePasswordRule hasCharacterGroups(int count, String text) {
@@ -103,7 +103,7 @@ public class ChangePasswordRule {
 
 
     public static ChangePasswordRule length(int minLength) {
-        return length(minLength, "At least %d characters long".formatted(minLength));
+        return length(minLength, String.format("At least %d characters long", minLength));
     }
 
     public static ChangePasswordRule length(int minLength, String text) {
@@ -113,7 +113,7 @@ public class ChangePasswordRule {
 
 
     public static ChangePasswordRule length(int minLength, int maxLength) {
-        return length(minLength, maxLength, "Between %d and %d characters long".formatted(minLength, maxLength));
+        return length(minLength, maxLength, String.format("Between %d and %d characters long", minLength, maxLength));
     }
 
     public static ChangePasswordRule length(int minLength, int maxLength, String text) {
@@ -127,7 +127,7 @@ public class ChangePasswordRule {
 
     public static ChangePasswordRule notPreviousOf(Function<CharSequence, String> passwordEncoder,
                                                    String... previousEncodedPasswords) {
-        return notPreviousOf("Not any of %d previous passwords".formatted(previousEncodedPasswords.length),
+        return notPreviousOf(String.format("Not any of %d previous passwords", previousEncodedPasswords.length),
                 passwordEncoder, previousEncodedPasswords);
     }
 
@@ -143,7 +143,7 @@ public class ChangePasswordRule {
                                                 ChangePasswordPanel.ChangePasswordI18n changePasswordI18n,
                                                 Function<String, PasswordStrengthLevel> scorer) {
         return strengthOf(strengthLevel, scorer,
-                "Minimum strength of %s".formatted(changePasswordI18n.getPasswordStrengthLevelCaption(strengthLevel)));
+                String.format("Minimum strength of %s", changePasswordI18n.getPasswordStrengthLevelCaption(strengthLevel)));
     }
 
     public static ChangePasswordRule strengthOf(PasswordStrengthLevel strengthLevel,
