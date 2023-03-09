@@ -14,7 +14,7 @@
     </description>
 
     <properties>
-        <vaadin.version>24.0.0.rc2</vaadin.version>
+        <vaadin.version>24.0.0</vaadin.version>
 
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>

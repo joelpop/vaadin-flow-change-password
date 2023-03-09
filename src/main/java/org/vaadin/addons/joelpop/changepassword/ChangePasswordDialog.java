@@ -5,8 +5,11 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.shared.Registration;
-import org.vaadin.addons.joelpop.changepassword.ChangePassword.PasswordStrength;
+import org.vaadin.addons.joelpop.changepassword.ChangePasswordPanel.ChangePasswordI18n;
+import org.vaadin.addons.joelpop.changepassword.ChangePasswordPanel.ChangePasswordType;
+import org.vaadin.addons.joelpop.changepassword.ChangePasswordPanel.PasswordStrength;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -15,7 +18,7 @@ import java.util.function.Function;
  * +-header-------------------------------------+
  * | Change Password                            |
  * +-content------------------------------------+
- * | +-changePassword-------------------------+ |
+ * | +-changePasswordPanel--------------------+ |
  * | |                                        | |
  * | |                                        | |
  * | |                                        | |
@@ -42,27 +45,45 @@ import java.util.function.Function;
  * </pre>
  */
 public class ChangePasswordDialog extends Composite<Dialog> {
+    private transient ChangePasswordDialogI18n changePasswordDialogI18n;
+
     private final Dialog dialog;
-    private final ChangePassword changePassword;
+    private final ChangePasswordPanel changePasswordPanel;
+    private final Button cancelButton;
     private final Button okButton;
 
     public ChangePasswordDialog() {
-        changePassword = new ChangePassword();
+        this(ChangePasswordType.CHANGE_KNOWN);
+    }
+
+    public ChangePasswordDialog(ChangePasswordType changePasswordType) {
+        this(changePasswordType, new ChangePasswordDialogI18n());
+    }
+
+    public ChangePasswordDialog(ChangePasswordDialogI18n changePasswordDialogI18n) {
+        this(ChangePasswordType.CHANGE_KNOWN, changePasswordDialogI18n);
+    }
+
+    public ChangePasswordDialog(ChangePasswordType changePasswordType,
+                                ChangePasswordDialogI18n changePasswordDialogI18n) {
+        this.changePasswordDialogI18n = changePasswordDialogI18n;
+
+        changePasswordPanel = new ChangePasswordPanel(changePasswordType, changePasswordDialogI18n);
 
         dialog = getContent();
         dialog.setModal(true);
         dialog.setCloseOnOutsideClick(false);
         dialog.setCloseOnEsc(false);
-        dialog.setHeaderTitle("Change Password");
-        dialog.add(changePassword);
+        dialog.setHeaderTitle(changePasswordDialogI18n.getHeadingLabel());
+        dialog.add(changePasswordPanel);
 
-        var cancelButton = new Button("Cancel");
+        cancelButton = new Button(changePasswordDialogI18n.getCancelButtonLabel());
         cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         cancelButton.setDisableOnClick(true);
         cancelButton.addClickShortcut(Key.ESCAPE);
         cancelButton.addClickListener(this::onCancelClick);
 
-        okButton = new Button("OK");
+        okButton = new Button(changePasswordDialogI18n.getOkButtonLabel());
         okButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         okButton.setDisableOnClick(true);
         okButton.addClickShortcut(Key.ENTER);
@@ -73,19 +94,69 @@ public class ChangePasswordDialog extends Composite<Dialog> {
         footer.add(okButton);
     }
 
+    public ChangePasswordDialogI18n getChangePasswordDialogI18n() {
+        return changePasswordDialogI18n;
+    }
+
+    public void setChangePasswordDialogI18n(ChangePasswordDialogI18n changePasswordDialogI18n) {
+        this.changePasswordDialogI18n = changePasswordDialogI18n;
+
+        changePasswordPanel.setChangePasswordI18n(changePasswordDialogI18n);
+        dialog.setHeaderTitle(changePasswordDialogI18n.getHeadingLabel());
+        cancelButton.setText(changePasswordDialogI18n.getCancelButtonLabel());
+        okButton.setText(changePasswordDialogI18n.getOkButtonLabel());
+    }
+
+    public void reset() {
+        changePasswordPanel.reset();
+    }
+
+    public void setInfoText(Html html) {
+        changePasswordPanel.setInfoText(html);
+    }
+
+    public List<ChangePasswordRule> getUseridRules() {
+        return changePasswordPanel.getUseridRules();
+    }
+
+    public void setUseridRules(ChangePasswordRule... rules) {
+        changePasswordPanel.setUseridRules(rules);
+    }
+
+    public void addUseridRule(ChangePasswordRule changePasswordRule) {
+        changePasswordPanel.addUseridRule(changePasswordRule);
+    }
+
+    public List<ChangePasswordRule> getPasswordRules() {
+        return changePasswordPanel.getPasswordRules();
+    }
+
+    public void setPasswordRules(ChangePasswordRule... rules) {
+        changePasswordPanel.setPasswordRules(rules);
+    }
+
+    public void addPasswordRule(ChangePasswordRule changePasswordRule) {
+        changePasswordPanel.addPasswordRule(changePasswordRule);
+    }
+
+    public void setScorer(Function<String, PasswordStrength> scorer) {
+        changePasswordPanel.setScorer(scorer);
+    }
+
+
+
     private void onCancelClick(ClickEvent<Button> event) {
         dialog.close();
         fireCancelEvent(event.isFromClient());
+        cancelButton.setEnabled(true);
     }
 
     private void onOkClick(ClickEvent<Button> event) {
-        if (changePassword.isValid()) {
+        if (changePasswordPanel.isValid()) {
             dialog.close();
             fireOkEvent(event.isFromClient());
         }
-        else {
-            okButton.setEnabled(true);
-        }
+        okButton.setEnabled(true);
     }
 
     public boolean isOpened() {
@@ -104,20 +175,41 @@ public class ChangePasswordDialog extends Composite<Dialog> {
         dialog.close();
     }
 
-    public void setCurrentPassword(String password) {
-        changePassword.setCurrentPassword(password);
-    }
 
-    public void setInfoText(Html html) {
-        changePassword.setInfoText(html);
-    }
+    public static class ChangePasswordDialogI18n extends ChangePasswordI18n {
+        private String headingLabel;
+        private String cancelButtonLabel;
+        private String okButtonLabel;
 
-    public void addRule(PasswordRule passwordRule) {
-        changePassword.addRule(passwordRule);
-    }
+        public ChangePasswordDialogI18n() {
+            headingLabel = "Change Password";
+            cancelButtonLabel = "Cancel";
+            okButtonLabel = "OK";
+        }
 
-    public void setScorer(Function<String, PasswordStrength> scorer) {
-        changePassword.setScorer(scorer);
+        public String getHeadingLabel() {
+            return headingLabel;
+        }
+
+        public void setHeadingLabel(String headingLabel) {
+            this.headingLabel = headingLabel;
+        }
+
+        public String getCancelButtonLabel() {
+            return cancelButtonLabel;
+        }
+
+        public void setCancelButtonLabel(String cancelButtonLabel) {
+            this.cancelButtonLabel = cancelButtonLabel;
+        }
+
+        public String getOkButtonLabel() {
+            return okButtonLabel;
+        }
+
+        public void setOkButtonLabel(String okButtonLabel) {
+            this.okButtonLabel = okButtonLabel;
+        }
     }
 
     // OkEvent
@@ -127,8 +219,16 @@ public class ChangePasswordDialog extends Composite<Dialog> {
             super(source, fromClient);
         }
 
+        public String getUserid() {
+            return getSource().changePasswordPanel.getUserid();
+        }
+
+        public String getCurrentPassword() {
+            return getSource().changePasswordPanel.getCurrentPassword();
+        }
+
         public String getDesiredPassword() {
-            return getSource().changePassword.getDesiredPassword();
+            return getSource().changePasswordPanel.getDesiredPassword();
         }
     }
 
