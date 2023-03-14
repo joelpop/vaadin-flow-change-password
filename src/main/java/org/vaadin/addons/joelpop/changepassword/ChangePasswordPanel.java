@@ -181,7 +181,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
         passwordComplexityBlock.add(passwordComplexityLabelSpan);
         passwordComplexityBlock.add(passwordRuleBlock);
 
-        strengthMeter = new StrengthMeter(changePasswordI18n);
+        strengthMeter = new StrengthMeter();
         strengthMeter.setVisible(false);
 
         helpBlock = new VerticalLayout();
@@ -340,7 +340,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
         confirmPasswordField.setLabel(changePasswordI18n.getConfirmPasswordLabel());
         useridComplexityLabelSpan.setText(changePasswordI18n.getUseridRulesLabel());
         passwordComplexityLabelSpan.setText(changePasswordI18n.getPasswordRulesLabel());
-        strengthMeter.setChangePasswordI18n(changePasswordI18n);
+        strengthMeter.updateLabels();
     }
 
     @Override
@@ -502,6 +502,9 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
         private String useridRulesLabel;
         private String passwordRulesLabel;
         private String passwordStrengthLabel;
+        private String ruleEmptyLabel;
+        private String ruleFailLabel;
+        private String rulePassLabel;
         private String requiredFieldMessageFormat;
         private String useridInvalidMessage;
         private String passwordInvalidMessage;
@@ -519,6 +522,9 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
             useridRulesLabel = "User ID Rules";
             passwordRulesLabel = "Password Complexity Rules";
             passwordStrengthLabel = "Password Strength";
+            ruleEmptyLabel = "";
+            ruleFailLabel = "Fail";
+            rulePassLabel = "Pass";
             requiredFieldMessageFormat = "%s is required.";
             useridInvalidMessage = "Desired user ID must satisfy all User ID Rules.";
             passwordInvalidMessage = "Desired password must satisfy all Password Complexity Rules.";
@@ -658,6 +664,60 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
         }
 
         /**
+         * Return the popup text for the empty rule icon.
+         *
+         * @return the popup text for the empty rule icon
+         */
+        public String getRuleEmptyLabel() {
+            return ruleEmptyLabel;
+        }
+
+        /**
+         * Set the popup text for the empty rule icon.
+         *
+         * @param ruleEmptyLabel the popup text for the empty rule icon
+         */
+        public void setRuleEmptyLabel(String ruleEmptyLabel) {
+            this.ruleEmptyLabel = ruleEmptyLabel;
+        }
+
+        /**
+         * Return the popup text for the failed rule icon.
+         *
+         * @return the popup text for the failed rule icon
+         */
+        public String getRuleFailLabel() {
+            return ruleFailLabel;
+        }
+
+        /**
+         * Set the popup text for the failed rule icon.
+         *
+         * @param ruleFailLabel the popup text for the failed rule icon
+         */
+        public void setRuleFailLabel(String ruleFailLabel) {
+            this.ruleFailLabel = ruleFailLabel;
+        }
+
+        /**
+         * Return the popup text for the passed rule icon.
+         *
+         * @return the popup text for the passed rule icon
+         */
+        public String getRulePassLabel() {
+            return rulePassLabel;
+        }
+
+        /**
+         * Set the popup text for the passed rule icon.
+         *
+         * @param rulePassLabel the popup text for the passed rule icon
+         */
+        public void setRulePassLabel(String rulePassLabel) {
+            this.rulePassLabel = rulePassLabel;
+        }
+
+        /**
          * Return the format string used for displaying the required field message.
          *
          * @return the format string used for displaying the required field message
@@ -753,7 +813,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
     }
 
 
-    private static class RuleItem extends Composite<HorizontalLayout> {
+    private class RuleItem extends Composite<HorizontalLayout> {
         public static final String ICON_SIZE = "1.875ex";
 
         private final transient ChangePasswordRule changePasswordRule;
@@ -792,32 +852,33 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
             return satisfied;
         }
 
-        private static Icon createEmptyIcon() {
+        private Icon createEmptyIcon() {
             var icon = VaadinIcon.CIRCLE_THIN.create();
             icon.setColor("var(--lumo-contrast-50pct)");
             icon.setSize(ICON_SIZE);
+            icon.setTooltipText(changePasswordI18n.getRuleEmptyLabel());
             return icon;
         }
 
-        private static Icon createFailIcon() {
+        private Icon createFailIcon() {
             var icon = VaadinIcon.CLOSE_CIRCLE.create();
             icon.setColor("var(--lumo-error-color)");
             icon.setSize(ICON_SIZE);
+            icon.setTooltipText(changePasswordI18n.getRuleFailLabel());
             return icon;
         }
 
-        private static Icon createPassIcon() {
+        private Icon createPassIcon() {
             var icon = VaadinIcon.CHECK_CIRCLE_O.create();
             icon.setColor("var(--lumo-success-color)");
             icon.setSize(ICON_SIZE);
+            icon.setTooltipText(changePasswordI18n.getRulePassLabel());
             return icon;
         }
     }
 
 
-    private static class StrengthMeter extends Composite<VerticalLayout> {
-        private transient ChangePasswordI18n changePasswordI18n;
-
+    private class StrengthMeter extends Composite<VerticalLayout> {
         private final Span strengthLevelLabelSpan;
         private final List<Div> strengthLevelBoxes;
         private final Span strengthLevelCaptionSpan;
@@ -825,9 +886,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
 
         private transient PasswordStrength passwordStrength;
 
-        public StrengthMeter(ChangePasswordI18n changePasswordI18n) {
-            this.changePasswordI18n = changePasswordI18n;
-
+        public StrengthMeter() {
             strengthLevelLabelSpan = new Span(changePasswordI18n.getPasswordStrengthLabel());
             strengthLevelLabelSpan.addClassNames(HEADING_CLASS_NAME);
 
@@ -857,9 +916,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
             content.add(feedbackDiv);
         }
 
-        public void setChangePasswordI18n(ChangePasswordI18n changePasswordI18n) {
-            this.changePasswordI18n = changePasswordI18n;
-
+        public void updateLabels() {
             strengthLevelLabelSpan.setText(changePasswordI18n.getPasswordStrengthLabel());
             setPasswordStrength(passwordStrength);
         }
