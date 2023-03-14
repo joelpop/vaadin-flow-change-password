@@ -61,7 +61,7 @@ import java.util.function.Function;
  * </pre>
  */
 @CssImport("./change-password/styles/change-password.css")
-public class ChangePasswordPanel extends Composite<HorizontalLayout> {
+public class ChangePasswordPanel extends Composite<HorizontalLayout> implements ChangePassword {
     public static final String HEADING_CLASS_NAME = "change-password-heading";
 
     private transient ChangePasswordType changePasswordType;
@@ -88,20 +88,39 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
     private final transient List<RuleItem> passwordRuleItems;
     private transient Function<String, PasswordStrength> scorer;
 
+    /**
+     * Create a change password panel for changing a known password. Uses default English labels.
+     */
     public ChangePasswordPanel() {
         this(ChangePasswordType.CHANGE_KNOWN, new ChangePasswordI18n());
     }
 
+    /**
+     * Create a change password panel for the supplied type. Uses default English labels.
+     *
+     * @param changePasswordType the type of password change to make
+     */
     public ChangePasswordPanel(ChangePasswordType changePasswordType) {
         this(changePasswordType, new ChangePasswordI18n());
     }
 
+    /**
+     * Create a change password panel for changing a known password. Uses the supplied labels.
+     *
+     * @param changePasswordI18n the labels to use for the panel in place of the default English ones
+     */
     public ChangePasswordPanel(ChangePasswordI18n changePasswordI18n) {
         this(ChangePasswordType.CHANGE_KNOWN, changePasswordI18n);
     }
 
-
-    public ChangePasswordPanel(ChangePasswordType changePasswordType, ChangePasswordI18n changePasswordI18n) {
+    /**
+     * Create a change password panel for the supplied type and labels.
+     *
+     * @param changePasswordType the type of password change to make
+     * @param changePasswordI18n the labels to use for the panel in place of the default English ones
+     */
+    public ChangePasswordPanel(ChangePasswordType changePasswordType,
+                               ChangePasswordI18n changePasswordI18n) {
         this.changePasswordI18n = changePasswordI18n;
 
         useridTextField = new TextField(changePasswordI18n.getUserIdLabel());
@@ -134,7 +153,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         infoBlock = new Div();
         infoBlock.setVisible(false);
 
-        useridComplexityLabelSpan = new Span(changePasswordI18n.getUseridComplexityLabel());
+        useridComplexityLabelSpan = new Span(changePasswordI18n.getUseridRulesLabel());
         useridComplexityLabelSpan.addClassNames(HEADING_CLASS_NAME);
 
         useridRuleBlock = new VerticalLayout();
@@ -148,7 +167,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         useridComplexityBlock.add(useridComplexityLabelSpan);
         useridComplexityBlock.add(useridRuleBlock);
 
-        passwordComplexityLabelSpan = new Span(changePasswordI18n.getPasswordComplexityLabel());
+        passwordComplexityLabelSpan = new Span(changePasswordI18n.getPasswordRulesLabel());
         passwordComplexityLabelSpan.addClassNames(HEADING_CLASS_NAME);
 
         passwordRuleBlock = new VerticalLayout();
@@ -282,10 +301,12 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
                 : ValidationResult.error(changePasswordI18n.getMismatchedPasswordsMessage());
     }
 
+    @Override
     public ChangePasswordType getChangePasswordType() {
         return changePasswordType;
     }
 
+    @Override
     public void setChangePasswordType(ChangePasswordType changePasswordType) {
         this.changePasswordType = changePasswordType;
 
@@ -296,10 +317,20 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         currentPasswordField.setVisible(changePasswordType == ChangePasswordType.CHANGE_KNOWN);
     }
 
+    /**
+     * Return the labels used for the panel.
+     *
+     * @return the labels used for the panel
+     */
     public ChangePasswordI18n getChangePasswordI18n() {
         return changePasswordI18n;
     }
 
+    /**
+     * Set the labels for the panel to use.
+     *
+     * @param changePasswordI18n the labels for the panel to use
+     */
     public void setChangePasswordI18n(ChangePasswordI18n changePasswordI18n) {
         this.changePasswordI18n = changePasswordI18n;
 
@@ -307,11 +338,12 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         currentPasswordField.setLabel(changePasswordI18n.getCurrentPasswordLabel());
         desiredPasswordField.setLabel(changePasswordI18n.getDesiredPasswordLabel());
         confirmPasswordField.setLabel(changePasswordI18n.getConfirmPasswordLabel());
-        useridComplexityLabelSpan.setText(changePasswordI18n.getUseridComplexityLabel());
-        passwordComplexityLabelSpan.setText(changePasswordI18n.getPasswordComplexityLabel());
+        useridComplexityLabelSpan.setText(changePasswordI18n.getUseridRulesLabel());
+        passwordComplexityLabelSpan.setText(changePasswordI18n.getPasswordRulesLabel());
         strengthMeter.setChangePasswordI18n(changePasswordI18n);
     }
 
+    @Override
     public void reset() {
         credentials.setUserId(null);
         credentials.setCurrent(null);
@@ -322,10 +354,12 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         setChangePasswordType(changePasswordType);
     }
 
+    @Override
     public String getUserid() {
         return credentials.getUserId();
     }
 
+    @Override
     public void setUserid(String userid) {
         credentials.setUserId(userid);
         credentialsBinder.refreshFields();
@@ -333,20 +367,24 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         setChangePasswordType(changePasswordType);
     }
 
+    @Override
     public String getCurrentPassword() {
         return credentials.getCurrent();
     }
 
+    @Override
     public String getDesiredPassword() {
         return credentials.getDesired();
     }
 
+    @Override
     public void setInfoText(String infoText) {
         setInfoText(Optional.ofNullable(infoText)
                 .map(Text::new)
                 .orElse(null));
     }
 
+    @Override
     public void setInfoText(Component infoTextComponent) {
         infoBlock.removeAll();
 
@@ -359,20 +397,23 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         updateHelpBlockVisibility();
     }
 
+    @Override
     public List<ChangePasswordRule> getUseridRules() {
         return useridRuleItems.stream()
                 .map(RuleItem::getRule)
                 .toList();
     }
 
+    @Override
     public void setUseridRules(ChangePasswordRule... rules) {
         useridRuleItems.clear();
         useridRuleBlock.removeAll();
 
-        addUseridRule(rules);
+        addUseridRules(rules);
     }
 
-    public void addUseridRule(ChangePasswordRule... rules) {
+    @Override
+    public void addUseridRules(ChangePasswordRule... rules) {
         Arrays.stream(rules)
                 .map(RuleItem::new)
                 .forEach(ruleItem -> {
@@ -384,20 +425,23 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         updateHelpBlockVisibility();
     }
 
+    @Override
     public List<ChangePasswordRule> getPasswordRules() {
         return passwordRuleItems.stream()
                 .map(RuleItem::getRule)
                 .toList();
     }
 
+    @Override
     public void setPasswordRules(ChangePasswordRule... rules) {
         passwordRuleItems.clear();
         passwordRuleBlock.removeAll();
 
-        addPasswordRule(rules);
+        addPasswordRules(rules);
     }
 
-    public void addPasswordRule(ChangePasswordRule... rules) {
+    @Override
+    public void addPasswordRules(ChangePasswordRule... rules) {
         Arrays.stream(rules)
                 .map(RuleItem::new)
                 .forEach(ruleItem -> {
@@ -409,6 +453,12 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         updateHelpBlockVisibility();
     }
 
+    @Override
+    public boolean isValid() {
+        return credentialsBinder.validate().isOk();
+    }
+
+    @Override
     public void setScorer(Function<String, PasswordStrength> scorer) {
         this.scorer = scorer;
 
@@ -437,24 +487,20 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         }
     }
 
-    public boolean isValid() {
-        return credentialsBinder.validate().isOk();
-    }
 
-
-    public enum ChangePasswordType {
-        ESTABLISH_NEW,
-        CHANGE_FORGOTTEN,
-        CHANGE_KNOWN
-    }
-
+    /**
+     * The labels for the panel to use.
+     * <p>
+     *     The default labels are US English.
+     * </p>
+     */
     public static class ChangePasswordI18n {
         private String userIdLabel;
         private String currentPasswordLabel;
         private String desiredPasswordLabel;
         private String confirmPasswordLabel;
-        private String useridComplexityLabel;
-        private String passwordComplexityLabel;
+        private String useridRulesLabel;
+        private String passwordRulesLabel;
         private String passwordStrengthLabel;
         private String requiredFieldMessageFormat;
         private String useridInvalidMessage;
@@ -462,13 +508,16 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
         private String mismatchedPasswordsMessage;
         private final Map<PasswordStrengthLevel, String> passwordStrengthLevelCaptions;
 
+        /**
+         * Create labels for the panel initialized with US English.
+         */
         public ChangePasswordI18n() {
             userIdLabel = "User ID";
             currentPasswordLabel = "Current Password";
             desiredPasswordLabel = "New Password";
             confirmPasswordLabel = "Confirm Password";
-            useridComplexityLabel = "User ID Rules";
-            passwordComplexityLabel = "Password Complexity Rules";
+            useridRulesLabel = "User ID Rules";
+            passwordRulesLabel = "Password Complexity Rules";
             passwordStrengthLabel = "Password Strength";
             requiredFieldMessageFormat = "%s is required.";
             useridInvalidMessage = "Desired user ID must satisfy all User ID Rules.";
@@ -482,98 +531,222 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
                     Map.entry(PasswordStrengthLevel.VERY_STRONG ,"Very Strong")));
         }
 
+        /**
+         * Return the label used for the user ID field.
+         *
+         * @return the user ID field label
+         */
         public String getUserIdLabel() {
             return userIdLabel;
         }
 
+        /**
+         * Set the label to use for the user ID field.
+         *
+         * @param userIdLabel the label to use for the user ID field
+         */
         public void setUserIdLabel(String userIdLabel) {
             this.userIdLabel = userIdLabel;
         }
 
+        /**
+         * Return the label used for the current password field.
+         *
+         * @return the current password field label
+         */
         public String getCurrentPasswordLabel() {
             return currentPasswordLabel;
         }
 
+        /**
+         * Set the label to use for the current password field.
+         *
+         * @param currentPasswordLabel the label to use for the current password field
+         */
         public void setCurrentPasswordLabel(String currentPasswordLabel) {
             this.currentPasswordLabel = currentPasswordLabel;
         }
 
+        /**
+         * Return the label used for the desired password field.
+         *
+         * @return the desired password field label
+         */
         public String getDesiredPasswordLabel() {
             return desiredPasswordLabel;
         }
 
+        /**
+         * Set the label to use for the desired password field.
+         *
+         * @param desiredPasswordLabel the label to use for the desired password field
+         */
         public void setDesiredPasswordLabel(String desiredPasswordLabel) {
             this.desiredPasswordLabel = desiredPasswordLabel;
         }
 
+        /**
+         * Return the label used for the confirm password field.
+         *
+         * @return the user confirm password label
+         */
         public String getConfirmPasswordLabel() {
             return confirmPasswordLabel;
         }
 
+        /**
+         * Set the label to use for the confirm password field.
+         *
+         * @param confirmPasswordLabel the label to use for the confirm password field
+         */
         public void setConfirmPasswordLabel(String confirmPasswordLabel) {
             this.confirmPasswordLabel = confirmPasswordLabel;
         }
 
-        public String getUseridComplexityLabel() {
-            return useridComplexityLabel;
+        /**
+         * Return the label used for the user ID rules heading.
+         *
+         * @return the user ID rules heading label
+         */
+        public String getUseridRulesLabel() {
+            return useridRulesLabel;
         }
 
-        public void setUseridComplexityLabel(String useridComplexityLabel) {
-            this.useridComplexityLabel = useridComplexityLabel;
+        /**
+         * Set the label to use for the user ID rules heading.
+         *
+         * @param useridRulesLabel the label to use for the user ID rules heading
+         */
+        public void setUseridRulesLabel(String useridRulesLabel) {
+            this.useridRulesLabel = useridRulesLabel;
         }
 
-        public String getPasswordComplexityLabel() {
-            return passwordComplexityLabel;
+        /**
+         * Return the label used for the password rules heading.
+         *
+         * @return the password rules heading label
+         */
+        public String getPasswordRulesLabel() {
+            return passwordRulesLabel;
         }
 
-        public void setPasswordComplexityLabel(String complexityLabel) {
-            this.passwordComplexityLabel = complexityLabel;
+        /**
+         * Set the label to use for the password rules heading.
+         *
+         * @param complexityLabel the label to use for the password rules heading
+         */
+        public void setPasswordRulesLabel(String complexityLabel) {
+            this.passwordRulesLabel = complexityLabel;
         }
 
+        /**
+         * Return the label used for the password strength meter heading.
+         *
+         * @return the password rules strength meter label
+         */
         public String getPasswordStrengthLabel() {
             return passwordStrengthLabel;
         }
 
+        /**
+         * Set the label to use for the password strength meter heading.
+         *
+         * @param passwordStrengthLabel the label to use for the password strength meter heading
+         */
         public void setPasswordStrengthLabel(String passwordStrengthLabel) {
             this.passwordStrengthLabel = passwordStrengthLabel;
         }
 
+        /**
+         * Return the format string used for displaying the required field message.
+         *
+         * @return the format string used for displaying the required field message
+         */
         public String getRequiredFieldMessageFormat() {
             return requiredFieldMessageFormat;
         }
 
+        /**
+         * Set the format string to use for the required field message.
+         *
+         * @param requiredFieldMessageFormat the format string to use for the required field message
+         */
         public void setRequiredFieldMessageFormat(String requiredFieldMessageFormat) {
             this.requiredFieldMessageFormat = requiredFieldMessageFormat;
         }
 
+        /**
+         * Return the string to display when the user ID is invalid.
+         *
+         * @return the string to display when the user ID is invalid
+         */
         public String getUseridInvalidMessage() {
             return useridInvalidMessage;
         }
 
+        /**
+         * Set the string to display when the user ID is invalid.
+         *
+         * @param useridInvalidMessage the string to display when the user ID is invalid
+         */
         public void setUseridInvalidMessage(String useridInvalidMessage) {
             this.useridInvalidMessage = useridInvalidMessage;
         }
 
+        /**
+         * Return the string to display when the desired password is invalid.
+         *
+         * @return the string to display when the desired password is invalid
+         */
         public String getPasswordInvalidMessage() {
             return passwordInvalidMessage;
         }
 
+        /**
+         * Set the string to display when the desired password is invalid.
+         *
+         * @param passwordInvalidMessage the string to display when the desired password is invalid
+         */
         public void setPasswordInvalidMessage(String passwordInvalidMessage) {
             this.passwordInvalidMessage = passwordInvalidMessage;
         }
 
+        /**
+         * Return the string to display when the confirm password does not match the desired password.
+         *
+         * @return the string to display when the confirm password does not match the desired password
+         */
         public String getMismatchedPasswordsMessage() {
             return mismatchedPasswordsMessage;
         }
 
+        /**
+         * Set the string to display when the confirm password does not match the desired password.
+         *
+         * @param mismatchedPasswordsMessage the string to display when the confirm password does not match the desired password
+         */
         public void setMismatchedPasswordsMessage(String mismatchedPasswordsMessage) {
             this.mismatchedPasswordsMessage = mismatchedPasswordsMessage;
         }
 
+        /**
+         * Return the caption used for the specified password strength level.
+         *
+         * @param passwordStrengthLevel the password strength level for the requested caption
+         *
+         * @return the caption used for the specified password strength
+         */
         public String getPasswordStrengthLevelCaption(PasswordStrengthLevel passwordStrengthLevel) {
             return passwordStrengthLevelCaptions.get(passwordStrengthLevel);
         }
 
+        /**
+         * Set the caption to use for the specified password strength level.
+         *
+         * @param passwordStrengthLevel the password strength level for the requested caption
+         *
+         * @param caption the caption to use for the specified password strength level
+         */
         public void setPasswordStrengthLevelCaption(PasswordStrengthLevel passwordStrengthLevel, String caption) {
             this.passwordStrengthLevelCaptions.put(passwordStrengthLevel, caption);
         }
@@ -595,7 +768,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
             satisfiedDiv.add(createEmptyIcon());
 
             var textDiv = new Div();
-            textDiv.add(changePasswordRule.getText());
+            textDiv.add(changePasswordRule.getDescription());
 
             var content = getContent();
             content.add(satisfiedDiv);
@@ -767,30 +940,5 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> {
             this.confirm = confirm;
         }
     }
-
-
-    public enum PasswordStrengthLevel {
-        VERY_WEAK("#FF1F1f"),
-        WEAK("#FFBF00"),
-        MEDIOCRE("#EFEF00"),
-        STRONG("#1FFF1f"),
-        VERY_STRONG("#00BF00");
-
-        private final String color;
-
-        PasswordStrengthLevel(String color) {
-            this.color = color;
-        }
-
-        public String getColor() {
-            return this.color;
-        }
-    }
-
-
-    public record PasswordStrength(
-            PasswordStrengthLevel passwordStrengthLevel,
-            String feedback
-    ) {}
 
 }
