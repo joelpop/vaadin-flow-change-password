@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A description of a rule and its associated test.
@@ -87,7 +88,7 @@ public class ChangePasswordRule {
      * @return {@code true} if the text satisfies the rule, {@code false} otherwise
      */
     public static ChangePasswordRule length(int minLength, int maxLength) {
-        return length(minLength, maxLength, "Between %d and %d characters long".formatted(minLength, maxLength));
+        return length(minLength, maxLength, String.format("Between %d and %d characters long", minLength, maxLength));
     }
 
     /**
@@ -235,7 +236,7 @@ public class ChangePasswordRule {
      * @return {@code true} if the text satisfies the rule, {@code false} otherwise
      */
     public static ChangePasswordRule hasSpecifieds(int count, CharSequence specifieds) {
-        return hasSpecifieds(count, specifieds, "At least %d character%s from: %s".formatted(count, count == 1 ? "" : "s", specifieds));
+        return hasSpecifieds(count, specifieds, String.format("At least %d character%s from: %s", count, count == 1 ? "" : "s", specifieds));
     }
 
     /**
@@ -289,8 +290,6 @@ public class ChangePasswordRule {
     }
 
 
-    public static ChangePasswordRule length(int minLength) {
-        return length(minLength, String.format("At least %d characters long", minLength));
     /**
      * A rule with a US English description
      * requiring text, when encoded, to be different from the supplied encoded text.
@@ -319,8 +318,6 @@ public class ChangePasswordRule {
     }
 
 
-    public static ChangePasswordRule length(int minLength, int maxLength) {
-        return length(minLength, maxLength, String.format("Between %d and %d characters long", minLength, maxLength));
     /**
      * A rule with a US English description
      * requiring text, when encoded, to be different from the supplied encoded texts.
@@ -331,7 +328,7 @@ public class ChangePasswordRule {
      */
     public static ChangePasswordRule notPreviousOf(Function<CharSequence, String> encoder,
                                                    String... previousEncodedTexts) {
-        return notPreviousOf("Not any of %d previous passwords".formatted(previousEncodedTexts.length),
+        return notPreviousOf(String.format("Not any of %d previous passwords", previousEncodedTexts.length),
                 encoder, previousEncodedTexts);
     }
 
@@ -351,20 +348,6 @@ public class ChangePasswordRule {
         var encodedPasswords = Set.of(previousEncodedTexts);
         return new ChangePasswordRule(description,
                 text -> !encodedPasswords.contains(encoder.apply(text)));
-    }
-
-
-    public static ChangePasswordRule notPreviousOf(Function<CharSequence, String> passwordEncoder,
-                                                   String... previousEncodedPasswords) {
-        return notPreviousOf(String.format("Not any of %d previous passwords", previousEncodedPasswords.length),
-                passwordEncoder, previousEncodedPasswords);
-    }
-
-    public static ChangePasswordRule notPreviousOf(String text, Function<CharSequence, String> passwordEncoder,
-                                                   String... previousEncodedPasswords) {
-        var encodedPasswords = Set.of(previousEncodedPasswords);
-        return new ChangePasswordRule(text,
-                password -> !encodedPasswords.contains(passwordEncoder.apply(password)));
     }
 
 
