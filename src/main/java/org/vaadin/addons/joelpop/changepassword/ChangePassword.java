@@ -199,9 +199,23 @@ public interface ChangePassword {
     /**
      * The strength of the password expressed as a level and a feedback message.
      */
-    record PasswordStrength(
-            PasswordStrengthLevel passwordStrengthLevel,
-            String feedback
-    ) {}
+    class PasswordStrength {
+        private final PasswordStrengthLevel passwordStrengthLevel;
+        private final String feedback;
+
+        public PasswordStrength(PasswordStrengthLevel passwordStrengthLevel,
+                                String feedback) {
+            this.passwordStrengthLevel = passwordStrengthLevel;
+            this.feedback = feedback;
+        }
+
+        public PasswordStrengthLevel getPasswordStrengthLevel() {
+            return passwordStrengthLevel;
+        }
+
+        public String getFeedback() {
+            return feedback;
+        }
+    }
 
 }

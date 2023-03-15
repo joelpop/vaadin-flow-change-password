@@ -934,11 +934,11 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
             String feedback;
 
             if (passwordStrength != null) {
-                var passwordStrengthLevel = passwordStrength.passwordStrengthLevel();
+                var passwordStrengthLevel = passwordStrength.getPasswordStrengthLevel();
                 passwordStrengthLevelOrdinal = passwordStrengthLevel.ordinal();
                 passwordStrengthLevelColor = passwordStrengthLevel.getColor();
                 caption = changePasswordI18n.getPasswordStrengthLevelCaption(passwordStrengthLevel);
-                feedback = passwordStrength.feedback();
+                feedback = passwordStrength.getFeedback();
             }
             else {
                 passwordStrengthLevelOrdinal = -1;
