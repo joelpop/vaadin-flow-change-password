@@ -55,16 +55,16 @@ public class ChangePasswordDialog extends Composite<Dialog> implements ChangePas
      * Create a change password dialog for changing a known password. Uses default English labels.
      */
     public ChangePasswordDialog() {
-        this(ChangePasswordType.CHANGE_KNOWN);
+        this(ChangePasswordMode.CHANGE_KNOWN);
     }
 
     /**
-     * Create a change password dialog for the supplied type. Uses default English labels.
+     * Create a change password dialog for the supplied mode. Uses default English labels.
      *
-     * @param changePasswordType the type of password change to make
+     * @param changePasswordMode the type of password change to make
      */
-    public ChangePasswordDialog(ChangePasswordType changePasswordType) {
-        this(changePasswordType, new ChangePasswordDialogI18n());
+    public ChangePasswordDialog(ChangePasswordMode changePasswordMode) {
+        this(changePasswordMode, new ChangePasswordDialogI18n());
     }
 
     /**
@@ -73,20 +73,20 @@ public class ChangePasswordDialog extends Composite<Dialog> implements ChangePas
      * @param changePasswordDialogI18n the labels to use for the dialog in place of the default English ones
      */
     public ChangePasswordDialog(ChangePasswordDialogI18n changePasswordDialogI18n) {
-        this(ChangePasswordType.CHANGE_KNOWN, changePasswordDialogI18n);
+        this(ChangePasswordMode.CHANGE_KNOWN, changePasswordDialogI18n);
     }
 
     /**
-     * Create a change password dialog for the supplied type and labels.
+     * Create a change password dialog for the supplied mode and labels.
      *
-     * @param changePasswordType the type of password change to make
+     * @param changePasswordMode the type of password change to make
      * @param changePasswordDialogI18n the labels to use for the dialog in place of the default English ones
      */
-    public ChangePasswordDialog(ChangePasswordType changePasswordType,
+    public ChangePasswordDialog(ChangePasswordMode changePasswordMode,
                                 ChangePasswordDialogI18n changePasswordDialogI18n) {
         this.changePasswordDialogI18n = changePasswordDialogI18n;
 
-        changePasswordPanel = new ChangePasswordPanel(changePasswordType, changePasswordDialogI18n);
+        changePasswordPanel = new ChangePasswordPanel(changePasswordMode, changePasswordDialogI18n);
 
         dialog = getContent();
         dialog.setModal(true);
@@ -113,13 +113,13 @@ public class ChangePasswordDialog extends Composite<Dialog> implements ChangePas
     }
 
     @Override
-    public ChangePasswordType getChangePasswordType() {
-        return changePasswordPanel.getChangePasswordType();
+    public ChangePasswordMode getChangePasswordMode() {
+        return changePasswordPanel.getChangePasswordMode();
     }
 
     @Override
-    public void setChangePasswordType(ChangePasswordType changePasswordType) {
-        changePasswordPanel.setChangePasswordType(changePasswordType);
+    public void setChangePasswordMode(ChangePasswordMode changePasswordMode) {
+        changePasswordPanel.setChangePasswordMode(changePasswordMode);
     }
 
     /**

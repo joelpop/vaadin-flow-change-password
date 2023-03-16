@@ -115,8 +115,8 @@ public class ChangePasswordRule {
      *
      * @return {@code true} if the text satisfies the rule, {@code false} otherwise
      */
-    public static ChangePasswordRule startWithLetter() {
-        return startWithLetter("Must start with a letter");
+    public static ChangePasswordRule startsWithLetter() {
+        return startsWithLetter("Must start with a letter");
     }
 
     /**
@@ -125,7 +125,7 @@ public class ChangePasswordRule {
      * @param description the displayed description of the rule
      * @return {@code true} if the text satisfies the rule, {@code false} otherwise
      */
-    public static ChangePasswordRule startWithLetter(String description) {
+    public static ChangePasswordRule startsWithLetter(String description) {
         return new ChangePasswordRule(description,
                 text -> text.matches("\\p{Alpha}.*"));
     }
@@ -231,23 +231,23 @@ public class ChangePasswordRule {
      * A rule with a US English description
      * requiring text to contain at least {@code count} of the specified characters.
      *
-     * @param count the minimum number of the specified characters required in the text
      * @param specifieds the specified characters
+     * @param count the minimum number of the specified characters required in the text
      * @return {@code true} if the text satisfies the rule, {@code false} otherwise
      */
-    public static ChangePasswordRule hasSpecifieds(int count, CharSequence specifieds) {
+    public static ChangePasswordRule hasSpecifieds(CharSequence specifieds, int count) {
         return hasSpecifieds(count, specifieds, String.format("At least %d character%s from: %s", count, count == 1 ? "" : "s", specifieds));
     }
 
     /**
      * A rule requiring text to contain at least {@code count} of the specified characters.
      *
-     * @param count the minimum number of the specified characters required in the text
      * @param specifieds the specified characters
+     * @param count the minimum number of the specified characters required in the text
      * @param description the displayed description of the rule
      * @return {@code true} if the text satisfies the rule, {@code false} otherwise
      */
-    public static ChangePasswordRule hasSpecifieds(int count, CharSequence specifieds, String description) {
+    public static ChangePasswordRule hasSpecifieds(CharSequence specifieds, int count, String description) {
         var specifiedSet = specifieds.chars().boxed()
                 .map(i -> (char) i.intValue())
                 .collect(Collectors.toSet());
@@ -256,6 +256,19 @@ public class ChangePasswordRule {
                         .map(i -> (char) i.intValue())
                         .filter(specifiedSet::contains)
                         .count() >= count);
+    }
+
+
+    /**
+     * A rule requiring text to contain only the specified characters.
+     *
+     * @param specifieds the specified characters as regex character classes and ranges
+     * @param description the displayed description of the rule
+     * @return {@code true} if the text satisfies the rule, {@code false} otherwise
+     */
+    public static ChangePasswordRule hasOnly(String specifieds, String description) {
+        return new ChangePasswordRule(description,
+                text -> text.matches("[%s]*".formatted(specifieds)));
     }
 
 

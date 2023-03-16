@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
 public class ChangePasswordPanel extends Composite<HorizontalLayout> implements ChangePassword {
     public static final String HEADING_CLASS_NAME = "change-password-heading";
 
-    private transient ChangePasswordType changePasswordType;
+    private transient ChangePasswordMode changePasswordMode;
     private transient ChangePasswordI18n changePasswordI18n;
 
     private final TextField useridTextField;
@@ -93,16 +93,16 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
      * Create a change password panel for changing a known password. Uses default English labels.
      */
     public ChangePasswordPanel() {
-        this(ChangePasswordType.CHANGE_KNOWN, new ChangePasswordI18n());
+        this(ChangePasswordMode.CHANGE_KNOWN, new ChangePasswordI18n());
     }
 
     /**
-     * Create a change password panel for the supplied type. Uses default English labels.
+     * Create a change password panel for the supplied mode. Uses default English labels.
      *
-     * @param changePasswordType the type of password change to make
+     * @param changePasswordMode the type of password change to make
      */
-    public ChangePasswordPanel(ChangePasswordType changePasswordType) {
-        this(changePasswordType, new ChangePasswordI18n());
+    public ChangePasswordPanel(ChangePasswordMode changePasswordMode) {
+        this(changePasswordMode, new ChangePasswordI18n());
     }
 
     /**
@@ -111,16 +111,16 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
      * @param changePasswordI18n the labels to use for the panel in place of the default English ones
      */
     public ChangePasswordPanel(ChangePasswordI18n changePasswordI18n) {
-        this(ChangePasswordType.CHANGE_KNOWN, changePasswordI18n);
+        this(ChangePasswordMode.CHANGE_KNOWN, changePasswordI18n);
     }
 
     /**
-     * Create a change password panel for the supplied type and labels.
+     * Create a change password panel for the supplied mode and labels.
      *
-     * @param changePasswordType the type of password change to make
+     * @param changePasswordMode the type of password change to make
      * @param changePasswordI18n the labels to use for the panel in place of the default English ones
      */
-    public ChangePasswordPanel(ChangePasswordType changePasswordType,
+    public ChangePasswordPanel(ChangePasswordMode changePasswordMode,
                                ChangePasswordI18n changePasswordI18n) {
         this.changePasswordI18n = changePasswordI18n;
 
@@ -231,7 +231,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
 
         credentialsBinder.setBean(credentials);
 
-        setChangePasswordType(changePasswordType);
+        setChangePasswordMode(changePasswordMode);
     }
 
     @Override
@@ -303,19 +303,19 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
     }
 
     @Override
-    public ChangePasswordType getChangePasswordType() {
-        return changePasswordType;
+    public ChangePasswordMode getChangePasswordMode() {
+        return changePasswordMode;
     }
 
     @Override
-    public void setChangePasswordType(ChangePasswordType changePasswordType) {
-        this.changePasswordType = changePasswordType;
+    public void setChangePasswordMode(ChangePasswordMode changePasswordMode) {
+        this.changePasswordMode = changePasswordMode;
 
-        useridTextField.setVisible((changePasswordType == ChangePasswordType.ESTABLISH_NEW) ||
+        useridTextField.setVisible((changePasswordMode == ChangePasswordMode.ESTABLISH_NEW) ||
                                    (credentials.getUserId() != null));
-        useridTextField.setReadOnly(changePasswordType != ChangePasswordType.ESTABLISH_NEW);
+        useridTextField.setReadOnly(changePasswordMode != ChangePasswordMode.ESTABLISH_NEW);
         useridTextField.setRequiredIndicatorVisible(!useridTextField.isReadOnly());
-        currentPasswordField.setVisible(changePasswordType == ChangePasswordType.CHANGE_KNOWN);
+        currentPasswordField.setVisible(changePasswordMode == ChangePasswordMode.CHANGE_KNOWN);
     }
 
     /**
@@ -352,7 +352,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
         credentials.setConfirm(null);
         credentialsBinder.refreshFields();
 
-        setChangePasswordType(changePasswordType);
+        setChangePasswordMode(changePasswordMode);
     }
 
     @Override
@@ -365,7 +365,7 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
         credentials.setUserId(userid);
         credentialsBinder.refreshFields();
 
-        setChangePasswordType(changePasswordType);
+        setChangePasswordMode(changePasswordMode);
     }
 
     @Override
