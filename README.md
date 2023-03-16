@@ -20,51 +20,104 @@ The component's internationalization support can be used to customize the text l
 
 The `ChangePasswordPanel` component was designed to be used wherever it is needed in an application, such as in a view or in a dialog. It provides the fields for password changing, but it does not include any buttons.
 
-In its simplest form `ChangePasswordPanel` has only one column. This column consists of fields for entry of a user ID, a current password, a desired password, and a confirm password. The mode of the panel (see below) determines which fields are displayed.
-![Default Change Password Panel](README.resources/img_1.png)
+#### Most Simple Form
 
-In its most comprehensive form, `ChangePasswordPanel` has two columns. The left column is the same as in the simplest form. The right column can contain any or all of the following: instructions for the use of the component, user ID rules, password rules, and a strength meter. (In the image below, the left column is also displaying the optional user ID.)
-![Comprehensive Change Password Panel](README.resources/img_2.png)
+In its simplest form `ChangePasswordPanel` has only one column. This column consists of fields for entry of a user ID, a current password, a desired password, and a confirm password. The mode of the panel (see below) determines which fields are displayed. <br>![Simple Panel](README.resources/change-known.png)
 
-`ChangePasswordPanel` has three modes,
+#### Most Comprehensive Form
 
-  - `CHANGE_FORGOTTEN` - to use when the current password is not known - displays desired and confirm password fields. ![CHANGE_FORGOTTEN](README.resources/img_3.png)
-  - `CHANGE_KNOWN` - to use when the current password is known - displays known, desired, and confirm password fields. This mode can also be used for a forgotten password if the user has a temporary password to enter. Simply change the current password label to "Temporary Password". ![CHANGE_KNOWN](README.resources/img_1.png)
-  - `ESTABLISH_NEW` - to use when there is no user id nor current password - displays userid, desired, and confirm password fields. This mode can also be used for a forgotten password if the user has a one time passcode to enter. Simply change the user ID label to "One Time Passcode". ![ESTABLISH_NEW](README.resources/img_4.png)
+In its most comprehensive form, `ChangePasswordPanel` has two columns. The left column is the same as in the simplest form. The right column can contain any or all of the following:
+- instructions for the use of the component,
+- user ID rules,
+- password rules, and
+- a strength meter.
+
+![Comprehensive Panel](README.resources/comprehensive-panel.png)
+
+
+In the image above, the left column is also displaying the optional user ID. And please note this example is intended to show the _variety_ of redefined rules available in the component—not a recommended set of complexity rules!
 
 ### ChangePasswordDialog
 
-`ChangePasswordDialog` is a convenience dialog wrapper around `ChangePasswordPanel`. In addition to the panel, it includes a customizable header, buttons for canceling and submitting, and event listeners for the button clicks.
-![Change Password Dialog](README.resources/img_5.png)
+`ChangePasswordDialog` is a convenience dialog wrapper around `ChangePasswordPanel`. In addition to the panel, it includes a customizable header, buttons for canceling and submitting, and event listeners for the button presses. <br>![Comprehensive Dialog](README.resources/comprehensive-dialog.png)
+
+
+## ChangePassword Rules
+
+ChangePassword utilizes rules for userid and password validation. Included with ChangePassword are several predefined rules. The predefined rules include those for:
+
+- minimum length: <br>`ChangePasswordRule.length(8)`
+- length range: <br>`ChangePasswordRule.length(10, 64)`
+- has uppercase letters: <br>`ChangePasswordRule.hasUppercaseLetters(1)`
+- has lowercase letters: <br>`ChangePasswordRule.hasLowercaseLetters(1)`
+- has digits: <br>`ChangePasswordRule.hasDigits(1)`
+- has special characters: <br>`ChangePasswordRule.hasSpecials(1)`
+- has specified characters: <br>`ChangePasswordRule.hasSpecifieds("-_.@", 1)`
+- has only specified characters: <br>`ChangePasswordRule.hasOnly("-\\p{Alnum}.", "Only letters, digits, dots, and dashes")`
+- has characters from multiple character groups: <br>`ChangePasswordRule.hasCharacterGroups(3)`
+- is different from current password: <br>`ChangePasswordRule.different(passwordEncoder,
+  passwordEncoder.apply("user"))`
+- is different from previous passwords: <br>`ChangePasswordRule.notPreviousOf(passwordEncoder,
+  passwordEncoder.apply("first"),
+  passwordEncoder.apply("second"),
+  passwordEncoder.apply("third"))`
+- is at least a certain strength: <br>`ChangePasswordRule.strengthOf(PasswordStrengthLevel.STRONG,
+  changePassword.getChangePasswordI18n(),
+  desiredPassword -> ChangePasswordUtil.guessesToPasswordStrengthLevel(zxcvbn.measure(desiredPassword).getGuesses()))`
+
+In addition, a custom rule can be implemented by creating an instance of `ChangePasswordRule` and supplying it with a description and rule function.
+
+```
+    new ChangePasswordRule("Only letters, digits, and dots",
+            password -> password.matches("[\\p{Alnum}.]*"))
+```
+
+
+## ChangePassword Modes
+
+ChangePassword has three modes,
+
+- `CHANGE_FORGOTTEN` - to use when the current password is not known. <br>This mode displays the desired and confirm password fields. <br>![CHANGE_FORGOTTEN](README.resources/change-forgotten.png)
+- `CHANGE_KNOWN` - to use when the current password is known. <br>This mode displays the known, desired, and confirm password fields. It can also be used for a forgotten password if the user has been provided a temporary password. Simply change the "Current Password" label to "Temporary Password". <br>![CHANGE_KNOWN](README.resources/change-known.png)
+- `ESTABLISH_NEW` - to use when there is no user id nor current password. <br>This mode displays the userid, desired, and confirm password fields. It can also be used for a forgotten password if the user has been provided a one time passcode (OTP). Simply change the "User ID" label to "One Time Passcode". <br>![ESTABLISH_NEW](README.resources/establish-new.png)
 
 ## Label Customization and Internationalization
 
-By default, all ChangePassword labels are in English. If you need your labels in another language or need alternate English labels, use the `ChangePasswordI18n` class to specify the new labels.
-![Customization and Internationalization](README.resources/img_6.png)
+By default, all ChangePassword labels are in English. If you need your labels in another language or need alternate English labels, use the `ChangePasswordI18n` class to specify the new labels. <br>![Customization and Internationalization](README.resources/comprehensive-i18n-dialog.png)
 
 ## Example Usage
 
+Below are example usages of ChangePassword. First is one using `ChangePasswordPanel` in a very simple view, followed by a `ChangePasswordDialog` example. Subsequent examples apply to and build on these simple example usages.
+
 ### Simple View
 
-Panel, no instructions, no rules, no meter. Buttons and layout were added to provide interaction and organization.
+This example uses the `ChangePasswordPanel`. Because it is only a panel, it must be added to something, like this view, for it to be useful. If no `ChangePasswordMode` is specified to its constructor, it defaults to `CHANGE_KNOWN`.
+
+As this example makes no additional `ChangePasswordPanel` initializations, it will only display the input fields—no instructions, no rules, and no meter will be displayed.
+
+Buttons were added to the view to provide some user interaction with the panel.
 
 ```
 @Route(value = "change-password, layout = ChangePasswordLayout.class)
 public class ChangePasswordView extends Composite<VerticalLayout> {
-    private final ChangePasswordPanel changePasswordPanel;
+    private final ChangePasswordPanel changePassword;
     private final Button clearButton;
     private final Button okButton;
 
     public ChangePasswordView() {
-        changePasswordPanel = new ChangePasswordPanel(ChangePasswordType.CHANGE_KNOWN);
+        changePassword = new ChangePasswordPanel();
 
         clearButton = new Button("Clear");
         clearButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        clearButton.addClickListener(this::onClearClick);
+        clearButton.addClickListener(event -> changePassword.reset());
 
         okButton = new Button("OK");
         okButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        okButton.addClickListener(this::onOkClick);
+        okButton.addClickListener(event -> {
+            if (changePassword.isValid()) {
+                Notification.show("Desired Password is: %s".formatted(changePassword.getDesiredPassword()));
+            }
+        });
 
         var buttonBar = new HorizontalLayout();
         buttonBar.setWidthFull();
@@ -74,110 +127,99 @@ public class ChangePasswordView extends Composite<VerticalLayout> {
 
         var content = getContent();
         content.setSizeUndefined();
-        content.add(changePasswordPanel);
+        content.add(changePassword);
         content.add(buttonBar);
-    }
-
-    private void onClearClick(ClickEvent<Button> event) {
-        changePasswordPanel.reset();
-    }
-
-    private void onOkClick(ClickEvent<Button> event) {
-        if (changePasswordPanel.isValid()) {
-            Notification.show("Desired Password is: %s".formatted(changePasswordPanel.getDesiredPassword()));
-        }
     }
 }
 ```
 
+![Simple Panel](README.resources/simple-panel.png)
+
 ### Simple Dialog
 
-Dialog, no instructions, no rules, no meter. Because the buttons and layout are contained within the dialog, its usage is much simpler than the panel.
+This example uses the `ChangePasswordDialog` component. Like the `ChangePasswordPanel` component, if no `ChangePasswordMode` is specified to its constructor, it defaults to `CHANGE_KNOWN`.
+
+As this example also makes no additional `ChangePasswordDialog` initializations, it will only display the input fields of the `ChangePasswordPanel` component—no instructions, no rules, and no meter will be displayed—but because it is a dialog, it will display a dialog header and buttons.
+
+As the buttons and layout are contained within the dialog, you can see its usage is much simpler than that of the panel.
 
 ```
-var changePasswordDialog = new ChangePasswordDialog(ChangePasswordType.CHANGE_KNOWN);
-changePasswordDialog.addOkListener(e -> Notification.show("New password is \"%s\"".formatted(e.getDesiredPassword())));
-changePasswordDialog.open();
+    var changePassword = new ChangePasswordDialog();
+    changePassword.addOkListener(e -> Notification.show("Desired password is \"%s\"".formatted(e.getDesiredPassword())));
+    changePassword.open();
 ```
+
+![Simple Dialog](README.resources/simple-dialog.png)
 
 ### Show a Read-Only User ID
 
-Valid only for `CHANGE_FORGOTTEN` and `CHANGE_KNOWN` modes to show a read-only user ID to give the user context for what user's password is being changed. Note that for `ESTABLISH_NEW` mode, the user ID field is always shown and is read/write.
+Normally, the `CHANGE_FORGOTTEN` and `CHANGE_KNOWN` modes do not show the User ID field. However, if you supply a userid, it will show a read-only user ID. This can be useful to give the user context for what user's password is being changed.
 
 ```
-changePasswordPanel.setUserid("userid");
+    changePassword.setUserid("userid");
 
 ```
+
+![Show User ID](README.resources/show-userid.png)
+
+_Note that for `ESTABLISH_NEW` mode, the User ID field is always shown and is writeable._
 
 ### Show Instructions
 
-```
-changePasswordPanel.setInfoText(new Html("""
-    <span>
-        Instructions
-        <ol>
-            <li>Enter the current password.
-            <li>Provide a new password that satisfies the following complexity rules.
-            <li>Verify its strength with the meter.
-            <li>Repeat the new password to confirm.
-        </ol>
-    </span>"""));
-```
-
-### Show Password Complexity Rules
-
-ChangePassword includes several built-in rules. They can be used for both passwords and user IDs. The rules include:
-- minimum length
-- length range
-- has uppercase letters
-- has lowercase letters
-- has digits
-- has special characters
-- has characters from character groups
-- is different from current password
-- is different from N previous passwords
-- is at least a certain strength
-
-In addition, a custom rule can be implemented by creating an instance of `ChangePasswordRule`.
+Instructions for use of the component can be displayed at the top of the right column. Use the `setInfoText` method to provide the instructions either as a component (as shown below) or as a text string.
 
 ```
-changePasswordPanel.addPasswordRule(ChangePasswordRule.length(8));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.length(10, 64));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.hasUppercaseLetters(1));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.hasLowercaseLetters(1));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.hasDigits(1));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.hasSpecials(1));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.hasCharacterGroups(3));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.different(passwordEncoder,
-        passwordEncoder.apply("user")));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.notPreviousOf(passwordEncoder,
-        passwordEncoder.apply("first"),
-        passwordEncoder.apply("second"),
-        passwordEncoder.apply("third")));
-changePasswordPanel.addPasswordRule(ChangePasswordRule.strengthOf(PasswordStrengthLevel.STRONG,
-        changePasswordPanel.getChangePasswordI18n(),
-        desiredPassword -> ChangePasswordUtil.guessesToPasswordStrengthLevel(zxcvbn.measure(desiredPassword).getGuesses())));
+    changePassword.setInfoText(new Html("""
+        <span>
+            <span class="change-password-heading">Instructions</span>
+            <ol>
+                <li>Enter the current password.
+                <li>Provide a new password that satisfies the following complexity rules.
+                <li>Verify its strength with the meter.
+                <li>Repeat the new password to confirm.
+            </ol>
+        </span>"""));
 ```
+
+![Show Infotext](README.resources/show-infotext.png)
 
 ### Show User ID Rules
 
+If there are no userid rules supplied, the User ID Rule section is hidden. In order to display the section and its rules, simply add the rules to the component with either the `setUseridRules()` or the `addUseridRules()` method. For example:
+
 ```
-changePasswordPanel.addUseridRule(ChangePasswordRule.startWithLetter());
-changePasswordPanel.addUseridRule(ChangePasswordRule.length(10, 20));
-changePasswordPanel.addUseridRule(new ChangePasswordRule("Only letters, digits, and dots",
-        password -> password.matches("[\\p{Alnum}.]*")));
+        changePasswordPanel.addUseridRules(ChangePasswordRule.startsWithLetter());
+        changePasswordPanel.addUseridRules(ChangePasswordRule.length(10, 20));
 ```
+
+![Show User ID Rules](README.resources/show-userid-rules.png)
+
+Initially the rule validation indicator (the circle next to the rule description) is empty, but as the user types, the rule validation indicator shows either a red ex—indicating the rule is not satisfied or a green checkmark—indicating the rule is satisfied.
+
+![Show User ID Rules Active](README.resources/show-userid-rules-active.png)
+
+### Show Password Complexity Rules
+
+If there are no password rules supplied, the Password Complexity Rules section is hidden. In order to display the section and its rules, simply add the rules to the component with either the `setPasswordRules()` or the `addPasswordRules()` method. For example:
+
+```
+    changePassword.addPasswordRules(ChangePasswordRule.length(8));
+```
+
+![Show Password Rules](README.resources/show-password-rules.png)
 
 ### Show the Password Strength Meter
 
-This example usage uses the Zxcvbn password strength scorer.
+If a password strength scorer is supplied, the password strength meter is displayed. (The following example usage uses the Zxcvbn password strength scorer.)
 
 ```
-changePasswordPanel.setScorer(desiredPassword -> {
-    var strength = zxcvbn.measure(desiredPassword);
-    return new PasswordStrength(ChangePasswordUtil.guessesToPasswordStrengthLevel(strength.getGuesses()),
-            "Could take %s to crack. %s".formatted(
-                    strength.getCrackTimesDisplay().getOfflineSlowHashing1e4perSecond(),
-                    strength.getFeedback().getWarning()));
-});
+    changePassword.setScorer(desiredPassword -> {
+        var strength = zxcvbn.measure(desiredPassword);
+        return new PasswordStrength(ChangePasswordUtil.guessesToPasswordStrengthLevel(strength.getGuesses()),
+                "Could take %s to crack. %s".formatted(
+                        strength.getCrackTimesDisplay().getOfflineSlowHashing1e4perSecond(),
+                        strength.getFeedback().getWarning()));
+    });
 ```
+
+![Show Password Strength Meter](README.resources/show-strength-meter.png)

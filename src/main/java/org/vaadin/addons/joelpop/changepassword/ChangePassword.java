@@ -15,26 +15,26 @@ import java.util.function.Function;
 public interface ChangePassword {
 
     /**
-     * Return the change password type of the component.
+     * Return the change password mode of the component.
      * <p>
-     *     The type controls which input fields are visible
+     *     The mode controls which input fields are visible
      *     and if the user ID field (if visible) is read-only or not.
      * </p>
      *
-     * @return the change password type of the component
+     * @return the change password mode of the component
      */
-    ChangePasswordType getChangePasswordType();
+    ChangePasswordMode getChangePasswordMode();
 
     /**
-     * Set the change password type of the component.
+     * Set the change password mode of the component.
      * <p>
-     *     The type controls which input fields are visible
+     *     The mode controls which input fields are visible
      *     and if the user ID field (if visible) is read-only or not.
      * </p>
      *
-     * @param changePasswordType the change password type to set for the component
+     * @param changePasswordMode the change password mode to set for the component
      */
-    void setChangePasswordType(ChangePasswordType changePasswordType);
+    void setChangePasswordMode(ChangePasswordMode changePasswordMode);
 
     /**
      * Clears all the input field values.
@@ -143,11 +143,11 @@ public interface ChangePassword {
     /**
      * The type of the password change to make.
      * <p>
-     *     The type controls which input fields are visible
+     *     The mode controls which input fields are visible
      *     and if the user ID field (if visible) is read-only or not.
      * </p>
      */
-    enum ChangePasswordType {
+    enum ChangePasswordMode {
         /**
          * Use when the current password is not known.
          * <p>
