@@ -236,7 +236,7 @@ public class ChangePasswordRule {
      * @return {@code true} if the text satisfies the rule, {@code false} otherwise
      */
     public static ChangePasswordRule hasSpecifieds(CharSequence specifieds, int count) {
-        return hasSpecifieds(count, specifieds, String.format("At least %d character%s from: %s", count, count == 1 ? "" : "s", specifieds));
+        return hasSpecifieds(specifieds, count, String.format("At least %d character%s from: %s", count, count == 1 ? "" : "s", specifieds));
     }
 
     /**
