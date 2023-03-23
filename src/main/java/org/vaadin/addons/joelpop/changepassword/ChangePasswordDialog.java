@@ -90,6 +90,7 @@ public class ChangePasswordDialog extends Composite<Dialog> implements ChangePas
 
         dialog = getContent();
         dialog.setModal(true);
+        dialog.setDraggable(true);
         dialog.setCloseOnOutsideClick(false);
         dialog.setCloseOnEsc(false);
         dialog.setHeaderTitle(changePasswordDialogI18n.getHeadingLabel());
