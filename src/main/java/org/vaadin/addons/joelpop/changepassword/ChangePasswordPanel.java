@@ -8,6 +8,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -813,8 +814,8 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
     }
 
 
-    private class RuleItem extends Composite<HorizontalLayout> {
-        public static final String ICON_SIZE = "1.875ex";
+    private class RuleItem extends Composite<FlexLayout> {
+        public static final String ICON_SIZE = "14px";
 
         private final transient ChangePasswordRule changePasswordRule;
         private final Div satisfiedDiv;
@@ -824,7 +825,8 @@ public class ChangePasswordPanel extends Composite<HorizontalLayout> implements 
 
             satisfiedDiv = new Div();
             satisfiedDiv.addClassNames(LumoUtility.Display.FLEX,
-                    LumoUtility.Padding.Top.XSMALL, LumoUtility.AlignItems.START);
+                    LumoUtility.Padding.Top.XSMALL, LumoUtility.Padding.Right.SMALL,
+                    LumoUtility.AlignItems.START);
             satisfiedDiv.add(createEmptyIcon());
 
             var textDiv = new Div();
