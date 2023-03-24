@@ -6,7 +6,7 @@ A panel component and dialog for changing known passwords, forgotten passwords, 
 
 ## Description
 
-ChangePassword is a prebuilt set of components for use in your application where a new password must be provided and confirmed. It is available as a panel and a dialog. It supports multiple uses cases, including those for users needing to change their known passwords, for users who have forgotten their passwords, and for users who need to establish both their user ID and password for a new account.
+ChangePassword is a set of components for use in your application where a new password must be provided and confirmed. It is available as a panel and a dialog. It supports multiple uses cases, including those for users needing to change their known passwords, for users who have forgotten their passwords, and for users who need to establish both their user ID and password for a new account.
 
 Both the user ID and new/desired password fields support the adding of rules to match your application's requirements. It provides several prebuilt rules and support for adding custom rules as well. Each rule displays next to the input fields and gives the user feedback on if it has been satisfied.
 
@@ -72,6 +72,9 @@ In addition, a custom rule can be implemented by creating an instance of `Change
             password -> password.matches("[\\p{Alnum}.]*"))
 ```
 
+Here is what the dialog looks like after tabbing out of the "Current Password" field and typing "This" into the "New Password" field: <br>
+![Change Password Dialog in Action](comprehensive-dialog-active.png)
+<br>Now that the password is being entered, each of the rules show their pass/fail status instead of an empty circle. Those that have passed show a green checkmark, whereas those that have failed show a red ex.
 
 ## ChangePassword Modes
 

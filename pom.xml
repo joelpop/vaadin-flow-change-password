@@ -7,7 +7,7 @@
     <groupId>org.vaadin.addons.joelpop</groupId>
     <artifactId>flow-change-password</artifactId>
     <version>24.0.0</version>
-    <name>Vaadin Flow Change Password AddOn</name>
+    <name>Change Password AddOn for Vaadin Flow</name>
     <description>
         A Vaadin Flow AddOn for changing passwords.
         Implemented as a panel, so it can be used either in a dialog (included) or a view.
