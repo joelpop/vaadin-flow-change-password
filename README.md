@@ -73,7 +73,7 @@ In addition, a custom rule can be implemented by creating an instance of `Change
 ```
 
 Here is what the dialog looks like after tabbing out of the "Current Password" field and typing "This" into the "New Password" field: <br>
-![Change Password Dialog in Action](comprehensive-dialog-active.png)
+![Change Password Dialog in Action](README.resources/comprehensive-dialog-active.png)
 <br>Now that the password is being entered, each of the rules show their pass/fail status instead of an empty circle. Those that have passed show a green checkmark, whereas those that have failed show a red ex.
 
 ## ChangePassword Modes
